@@ -1,0 +1,10 @@
+aboutFeatures:
+  - title: "Certified Soul Coach"
+    description: "Trained in multiple modalities including Reiki, Angelic Healing, and Oracle Card Reading."
+    icon: '<i class="fas fa-handshake-angle fa-2x"></i>'
+  - title: "Published Author"
+    description: 'Author of "Soul Awakening: A Journey to Self-Discovery" and other spiritual guides.'
+    icon: '<i class="fas fa-book fa-2x"></i>'
+  - title: "Retreat Facilitator"
+    description: "Leads transformative retreats and workshops around the world, creating spaces for healing and growth."
+    icon: '<i class="fas fa-earth-americas fa-2x"></i>' 

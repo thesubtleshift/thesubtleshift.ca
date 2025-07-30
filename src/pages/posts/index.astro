@@ -1,0 +1,71 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+// Get blog posts from content collection
+const allPosts = await getCollection('posts');
+const posts = allPosts
+  .filter(post => !post.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// Helper function to create clean excerpts
+function createExcerpt(body: string, length: number = 160): string {
+  return body
+    .replace(/---[\s\S]*?---/, '') // Remove frontmatter
+    .replace(/#+\s/g, '') // Remove markdown headers
+    .replace(/\*\*/g, '') // Remove bold markdown
+    .replace(/\*/g, '') // Remove italic markdown
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Convert links to text
+    .trim()
+    .substring(0, length) + '...';
+}
+---
+
+<Layout title="Blog | The Subtle Shift">
+<section class="section gradient-background">
+    <div class="container">
+        <div class="section-header first-section-header">
+            <div class="section-tag">Blog</div>
+            <h1 class="section-title">The Subtle Shift Journal</h1>
+            <p class="section-description">Insights, reflections, and wisdom to support your spiritual journey.</p>
+        </div>
+
+        <div class="blog-list" id="blog-list">
+            {posts.map((post) => (
+                <div class="blog-list-item">
+                    <div class="blog-list-image">
+                        <a href={`/posts/${post.slug}`}>
+                            <img src={post.data.featured_image} alt={post.data.title}>
+                        </a>
+                    </div>
+                    <div class="blog-list-content">
+                        <div class="post-meta">
+                            <span class="section-tag">{post.data.categories}</span>
+                            <div class="post-date">{post.data.date.toLocaleDateString('en-US', { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                            })}</div>
+                        </div>
+                        <div>
+                            <a href={`/posts/${post.slug}`} class="blog-title-link">
+                                <h2 class="blog-list-title">{post.data.title}</h2>
+                            </a>
+                            <p class="blog-list-excerpt">{createExcerpt(post.body)}</p>
+                            <div class="blog-list-footer">
+                                <a href={`/posts/${post.slug}`} class="post-read-more">
+                                    Read Article
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        <polyline points="12 5 19 12 12 19"></polyline>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
+    </div>
+</section>
+</Layout> 

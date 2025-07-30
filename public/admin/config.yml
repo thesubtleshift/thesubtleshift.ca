@@ -1,0 +1,123 @@
+backend:
+  name: git-gateway
+  branch: master
+
+# Uncomment below to enable editorial workflow (drafts)
+# publish_mode: editorial_workflow
+
+media_folder: "static/images/uploads" # Media will be stored in the repo under static/images/uploads
+public_folder: "/images/uploads" # The src attribute for uploaded media
+
+collections:
+  - name: "posts" # Used in routes, e.g., /admin/collections/posts
+    label: "Blog Posts" # Used in the UI
+    folder: "content/posts" # The path to the folder where the documents are stored
+    create: true # Allow users to create new documents in this collection
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}" # Filename template
+    fields: # The fields for each document
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Date", name: "date", widget: "datetime"}
+      - {label: "Author", name: "author", widget: "string", default: "Denise Benning"}
+      - {label: "Categories", name: "categories", widget: "string"}
+      - {label: "Featured Image", name: "featured_image", widget: "image"}
+
+      - {label: "Body", name: "body", widget: "markdown"}
+
+  - name: "services"
+    label: "Services"
+    files:
+      - file: "data/services.yml"
+        label: "Services List"
+        name: "services_list"
+        fields:
+          - label: "Services"
+            name: "services"
+            widget: "list"
+            fields:
+              - {label: "Title", name: "title", widget: "string"}
+              - {label: "Description", name: "description", widget: "text"}
+              - {label: "Image", name: "image", widget: "image"}
+              - {label: "URL", name: "url", widget: "string"}
+
+  - name: "events"
+    label: "Events"
+    files:
+      - file: "data/events.yml"
+        label: "Featured Event"
+        name: "featured_event"
+        fields:
+          - {label: "Title", name: "title", widget: "string"}
+          - {label: "Date", name: "date", widget: "string"}
+          - {label: "Location", name: "location", widget: "string"}
+          - {label: "Description", name: "description", widget: "text"}
+          - {label: "Image", name: "image", widget: "image"}
+          - {label: "URL", name: "url", widget: "string"}
+      
+      - file: "data/recurring_events.yml"
+        label: "Recurring Events"
+        name: "recurring_events"
+        fields:
+          - label: "Events"
+            name: "events"
+            widget: "list"
+            fields:
+              - {label: "Title", name: "title", widget: "string"}
+              - {label: "Day", name: "day", widget: "string"}
+              - {label: "Time", name: "time", widget: "string"}
+              - {label: "Description", name: "description", widget: "text"}
+              - {label: "Image", name: "image", widget: "image"}
+              - {label: "Location", name: "location", widget: "string"}
+              - {label: "URL", name: "url", widget: "string"}
+
+  - name: "testimonials"
+    label: "Testimonials"
+    files:
+      - file: "data/testimonials.yml"
+        label: "Client Testimonials"
+        name: "client_testimonials"
+        fields:
+          - label: "Testimonials"
+            name: "testimonials"
+            widget: "list"
+            fields:
+              - {label: "Name", name: "name", widget: "string"}
+              - {label: "Location", name: "location", widget: "string"}
+              - {label: "Image", name: "image", widget: "image"}
+              - {label: "Quote", name: "quote", widget: "text"}
+
+  - name: "about"
+    label: "About Information"
+    files:
+      - file: "data/about_accordion.yml"
+        label: "About Accordion"
+        name: "about_accordion"
+        fields:
+          - label: "Accordion Items"
+            name: "aboutAccordion"
+            widget: "list"
+            fields:
+              - {label: "Title", name: "title", widget: "string"}
+              - {label: "Content", name: "content", widget: "markdown"}
+
+      - file: "data/about_features.yml"
+        label: "About Features"
+        name: "about_features"
+        fields:
+          - label: "Features"
+            name: "aboutFeatures"
+            widget: "list"
+            fields:
+              - {label: "Title", name: "title", widget: "string"}
+              - {label: "Description", name: "description", widget: "text"}
+              - {label: "Icon SVG", name: "icon", widget: "text", hint: "SVG code for the icon"}
+
+  - name: "settings"
+    label: "Site Settings"
+    files:
+      - file: "data/site_logo.yml"
+        label: "Site Logo"
+        name: "site_logo"
+        fields:
+          - {label: "Logo Image", name: "icon", widget: "image", required: false, hint: "Upload a logo image (leave empty to use text only)"}
+          - {label: "Icon Type", name: "icon_type", widget: "select", options: ["image", "svg"], default: "image"}
+          - {label: "Show Text", name: "show_text", widget: "boolean", default: true} 

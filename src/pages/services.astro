@@ -1,0 +1,69 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CallToAction from '../components/CallToAction.astro';
+import { ServicesList } from '../components/ui/services-list';
+import AboutAccordion from '../components/AboutAccordion.tsx';
+import aboutAccordion from '../data/services_accordion.json';
+
+// Import all service files dynamically
+const serviceJsonFiles = import.meta.glob('../data/services/*/*.json');
+const serviceHtmlFiles = import.meta.glob('../data/services/*/*.html', { as: 'raw' });
+const services = [];
+
+// Load services with their HTML content
+for (const path in serviceJsonFiles) {
+  const serviceData = await serviceJsonFiles[path]() as { default: any };
+  const service = { ...serviceData.default };
+  const pathParts = path.split('/');
+  const serviceName = pathParts[pathParts.length - 2]; // Get directory name
+  
+  // Find all numbered HTML files for this service
+  const numberedHtmlFiles = Object.keys(serviceHtmlFiles).filter(htmlPath => {
+    return htmlPath.includes(`/${serviceName}/`) && htmlPath.match(/\/\d+\.html$/);
+  });
+  
+  // Load all HTML content into sections array
+  if (numberedHtmlFiles.length > 0) {
+    // Sort files by number
+    numberedHtmlFiles.sort((a, b) => {
+      const numA = parseInt(a.match(/\/(\d+)\.html$/)?.[1] || '0');
+      const numB = parseInt(b.match(/\/(\d+)\.html$/)?.[1] || '0');
+      return numA - numB;
+    });
+    
+    service.htmlSections = [];
+    for (const htmlPath of numberedHtmlFiles) {
+      const htmlContent = await serviceHtmlFiles[htmlPath]() as string;
+      service.htmlSections.push(htmlContent);
+    }
+  }
+  
+  services.push(service);
+}
+---
+
+<Layout title="Spiritual Services | The Subtle Shift">
+<section class="section gradient-background">
+    <div class="container">
+        <div class="section-header first-section-header">
+            <div class="section-tag">Services</div>
+            <h1 class="section-title">Spiritual Services</h1>
+            <p class="section-description">Discover transformative healing modalities to support your spiritual journey and personal growth.</p>
+        </div>
+        <p>I would be honured to take you on a soul journey and discover more about the multidimensionality of YOU.
+
+            I specialize in light language, reiki, angel messages, channeling and intuitive services. My goal is to use these gifts to create a session that will empower you to find healing within yourself, set you on the path to finding your authentic truth, and develop a deeper connection to your Soul Light. Everyone’s spiritual journey is unique and we will work together to provide you with exactly what you need.
+            
+            Sessions available in studio or at distance. The Subtle Shift healing cabin in the woods has beautiful energy and creates a very special experience.</p>
+
+        <ServicesList services={services} client:load />
+        <div class="about-services">
+            <AboutAccordion items={aboutAccordion.servicesAccordion} client:load />
+        </div>
+
+
+    </div>
+</section>
+
+<CallToAction />
+</Layout> 

@@ -1,0 +1,46 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+  primaryButtonText?: string;
+  primaryButtonUrl?: string;
+  secondaryButtonText?: string;
+  secondaryButtonUrl?: string;
+  backgroundImage?: string;
+  showImage?: boolean;
+}
+
+const {
+  title = "Ready to step into your path?",
+  description = "Discover healing, clarity, and step into your being with personalized energy sessions, intuitive guidance, and transformative retreats. If you're not sure where you should start, I recommend an energy session!",
+  primaryButtonText = "Book a Session",
+  primaryButtonUrl = "/#contact",
+  secondaryButtonText = "Explore Services",
+  secondaryButtonUrl = "#services",
+  backgroundImage = "/images/ALG_7686-gen-fill_r2.jpg",
+  showImage = true
+} = Astro.props;
+---
+
+<!-- Call to Action Section -->
+<section class="hero-section cta-hero">
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h2 class="section-title">{title}</h2>
+                <p class="hero-description">{description}</p>
+                <div class="hero-buttons">
+                    <a href={primaryButtonUrl} class="button button-primary">{primaryButtonText}</a>
+                    {secondaryButtonText && secondaryButtonUrl && (
+                        <a href={secondaryButtonUrl} class="button button-outline">{secondaryButtonText}</a>
+                    )}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{showImage && (
+    <div class="dee-cta-photo">
+        <img src="/images/ALG_7686-gen-fill-small.jpg" alt="Denise Benning">
+    </div>
+)}

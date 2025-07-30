@@ -1,0 +1,178 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: post,
+  }));
+}
+
+const post = Astro.props;
+const { Content } = await post.render();
+
+// Get related posts (other posts, excluding current one)
+const allPosts = await getCollection('posts');
+const relatedPosts = allPosts
+  .filter(p => p.slug !== post.slug)
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+  .slice(0, 3);
+
+// Helper function to create excerpt
+function createExcerpt(content: string, maxLength: number = 120): string {
+  const plainText = content.replace(/<[^>]*>/g, '').replace(/\n/g, ' ');
+  if (plainText.length <= maxLength) return plainText;
+  return plainText.substring(0, maxLength).replace(/\s+\S*$/, '') + '...';
+}
+---
+
+<Layout title={`${post.data.title} | The Subtle Shift`}>
+<article class="blog-post-single">
+    <div class="post-hero" style={`background-image: url('${post.data.featured_image}')`}>
+        <div class="container">
+            <div class="post-hero-content">
+                <div class="post-meta">
+                    <span class="section-tag">{post.data.categories}</span>
+                    <span class="post-date" style="color: #fff;">
+                        {post.data.date.toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                        })}
+                    </span>
+                </div>
+                <h1 class="post-title">{post.data.title}</h1>
+                <div class="post-author">
+                    <span>By {post.data.author}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="post-content-wrapper">
+            <div class="post-content">
+                <Content />
+            </div>
+            
+            <div class="post-sidebar">
+                <div class="post-sidebar-content">
+                    <a href="/#about" class="about-author"><h3 class="sans-serif">About the Author</h3></a>
+                    <div class="author-bio">
+                        <p>Denise Benning is a spiritual guide, energy healer, and published author with over 15 years of experience helping individuals connect with their higher selves.</p>
+                    </div>
+                    
+                    <div class="post-share">
+                        <h3 class="sans-serif">Share This Article</h3>
+                        <div class="social-shares">
+                            <a href={`https://facebook.com/sharer/sharer.php?u=${Astro.url}`} target="_blank" rel="noopener" aria-label="Share on Facebook">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                                </svg>
+                            </a>
+                            <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.data.title)}&url=${Astro.url}`} target="_blank" rel="noopener" aria-label="Share on Twitter">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                                </svg>
+                            </a>
+                            <a href={`mailto:?subject=${encodeURIComponent(post.data.title)}&body=Check out this article: ${Astro.url}`} target="_blank" rel="noopener" aria-label="Share by Email">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="post-sidebar-content">
+                    <h3 class="sans-serif">Read My Book</h3>
+                    <div class="sidebar-book">
+                        <img src="/images/intimacy-of-light-cover.png" alt="The Intimacy of Light" class="sidebar-book-image">
+                        <img src="/images/ALG_7832-gen-fill-small.jpg" alt="Denise Benning" class="author-image">
+                        <blockquote>
+                            "A deeply personal story of my spiritual awakening."
+                        </blockquote>
+                        <a href="/book" class="post-read-more">
+                            Learn More
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="post-related">
+            <h2>More Articles</h2>
+        
+            {relatedPosts.length > 0 && (
+                <div class="blog-bento-grid">
+                    {/* Featured related post */}
+                    <div class="bento-item bento-featured">
+                        <a href={`/posts/${relatedPosts[0].slug}`} class="bento-link">
+                            <div class="bento-image">
+                                <img src={relatedPosts[0].data.featured_image} alt={relatedPosts[0].data.title}>
+                            </div>
+                            <div class="bento-content">
+                                <div class="post-meta">
+                                    <span class="section-tag">{relatedPosts[0].data.categories}</span>
+                                </div>
+                                <h3 class="bento-title bento-title-large">{relatedPosts[0].data.title}</h3>
+                                <p class="bento-excerpt">{createExcerpt(relatedPosts[0].body, 100)}</p>
+                                <div class="bento-read-more">
+                                    Read Article
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        <polyline points="12 5 19 12 12 19"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    {/* Medium related post */}
+                    {relatedPosts[1] && (
+                        <div class="bento-item bento-medium">
+                            <a href={`/posts/${relatedPosts[1].slug}`} class="bento-link">
+                                <div class="bento-image">
+                                    <img src={relatedPosts[1].data.featured_image} alt={relatedPosts[1].data.title}>
+                                </div>
+                                <div class="bento-content">
+                                    <div class="post-meta">
+                                        <span class="section-tag">{relatedPosts[1].data.categories}</span>
+                                    </div>
+                                    <h3 class="bento-title">{relatedPosts[1].data.title}</h3>
+                                    <p class="bento-excerpt">{createExcerpt(relatedPosts[1].body, 60)}</p>
+                                </div>
+                            </a>
+                        </div>
+                    )}
+
+                    {/* Newsletter subscription box */}
+                    <div class="gradient-background-reverse bento-item bento-related-newsletter">
+                        <div class="bento-newsletter-content">
+                            <h3 class="newsletter-title">The Subtle Shift Newsletter</h3>
+                            <p class="newsletter-description">Get meditations, resources, and the latest Subtle Shift updates delivered to your inbox for free.</p>
+                            <form class="bento-newsletter-form" action="#" method="post">
+                                <div class="newsletter-input-group">
+                                    <input type="email" name="email" placeholder="Your email address" required class="newsletter-input">
+                                    <button type="submit" class="button button-primary newsletter-button">Subscribe</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
+            
+            <div class="blog-view-all">
+                <a href="/posts" class="button button-outline">View All Articles</a>
+            </div>
+        </div>
+    </div>
+</article>
+</Layout> 

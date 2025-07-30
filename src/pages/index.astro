@@ -1,0 +1,514 @@
+---
+import Layout from '../layouts/Layout.astro';
+import testimonials from '../data/testimonials.json';
+import aboutAccordion from '../data/about_accordion.json';
+import eventCards from '../data/eventcards.json';
+import AboutAccordion from '../components/AboutAccordion';
+import HeroVideoDialog from '../components/magicui/hero-video-dialog';
+import { InfiniteMovingCards } from '../components/ui/infinite-moving-cards';
+import { ServicesCarousel } from '../components/ui/services-carousel';
+import CallToAction from '../components/CallToAction.astro';
+import PrimarySparkles from '../components/ui/primary-sparkles';
+import { getCollection } from 'astro:content';
+
+// Type definitions for imported JSON data
+interface Service {
+  title: string;
+  description: string;
+  image: string;
+  url: string;
+  htmlSections?: string[];
+}
+
+interface ServicesData {
+  services: Service[];
+}
+
+interface Testimonial {
+  quote: string;
+  name: string;
+}
+
+interface TestimonialsData {
+  testimonials: Testimonial[];
+}
+
+interface EventCard {
+  title: string;
+  tag: string;
+  description: string;
+  image: string;
+  url: string;
+}
+
+interface EventCardsData {
+  events: EventCard[];
+}
+
+// Type definition for individual events
+interface Event {
+  title: string;
+  date: string;
+  location: string;
+  description: string;
+  image: string;
+  url: string;
+  type: string;
+  featured: boolean;
+  sortDate: string;
+}
+
+// Import all event JSON files dynamically
+const eventFiles = import.meta.glob('../data/events/*.json');
+const events: Event[] = [];
+
+// Load and sort events by date
+for (const path in eventFiles) {
+  const eventData = await eventFiles[path]() as { default: Event };
+  events.push(eventData.default);
+}
+
+// Import all service files dynamically
+const serviceJsonFiles = import.meta.glob('../data/services/*/*.json');
+const serviceHtmlFiles = import.meta.glob('../data/services/*/*.html', { as: 'raw' });
+const services: Service[] = [];
+
+// Load services with their HTML content
+for (const path in serviceJsonFiles) {
+  const serviceData = await serviceJsonFiles[path]() as { default: Service };
+  const service = { ...serviceData.default };
+  const pathParts = path.split('/');
+  const serviceName = pathParts[pathParts.length - 2]; // Get directory name
+  
+  // Find all numbered HTML files for this service
+  const numberedHtmlFiles = Object.keys(serviceHtmlFiles).filter(htmlPath => {
+    return htmlPath.includes(`/${serviceName}/`) && htmlPath.match(/\/\d+\.html$/);
+  });
+  
+  console.log(`Found ${numberedHtmlFiles.length} HTML files for ${serviceName}:`, numberedHtmlFiles);
+  
+  // Load all HTML content into sections array
+  if (numberedHtmlFiles.length > 0) {
+    // Sort files by number
+    numberedHtmlFiles.sort((a, b) => {
+      const numA = parseInt(a.match(/\/(\d+)\.html$/)?.[1] || '0');
+      const numB = parseInt(b.match(/\/(\d+)\.html$/)?.[1] || '0');
+      return numA - numB;
+    });
+    
+    service.htmlSections = [];
+    for (const htmlPath of numberedHtmlFiles) {
+      const htmlContent = await serviceHtmlFiles[htmlPath]() as string;
+      service.htmlSections.push(htmlContent);
+    }
+    
+    console.log(`Added service: ${service.title} with ${service.htmlSections.length} HTML sections`);
+  } else {
+    console.log(`No numbered HTML files found for ${serviceName}`);
+  }
+  
+  services.push(service);
+}
+
+// Sort events by sortDate and get the next upcoming event (latest by date)
+events.sort((a, b) => new Date(a.sortDate).getTime() - new Date(b.sortDate).getTime());
+const featuredEvent = events.find(event => new Date(event.sortDate) >= new Date()) || events[0];
+
+// Get blog posts from content collection
+const allPosts = await getCollection('posts');
+const posts = allPosts
+  .filter(post => !post.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 5); // Get the 5 most recent posts for bento grid
+
+// Helper function to create clean excerpts
+function createExcerpt(body: string, length: number = 160): string {
+  return body
+    .replace(/---[\s\S]*?---/, '') // Remove frontmatter
+    .replace(/#+\s/g, '') // Remove markdown headers
+    .replace(/\*\*/g, '') // Remove bold markdown
+    .replace(/\*/g, '') // Remove italic markdown
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Convert links to text
+    .replace(/<[^>]*>/g, '') // Remove HTML tags
+    .replace(/\n/g, ' ') // Replace newlines with spaces
+    .trim()
+    .substring(0, length) + '...';
+}
+
+// Get blog posts for the blog section
+const sortedPosts = allPosts.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+
+// Cast imported data to proper types
+const testimonialsData = testimonials as TestimonialsData;
+const eventCardsData = eventCards as EventCardsData;
+
+// Transform testimonials for InfiniteMovingCards component
+const transformedTestimonials = testimonialsData.testimonials.map(testimonial => ({
+  quote: testimonial.quote,
+  name: testimonial.name,
+  title: "Client"
+}));
+---
+
+<Layout title="The Subtle Shift">
+<!-- Hero Section -->
+<div class="dee-cover-photo">
+    <img src="/images/Denise-on-rock-gen-fill_r3_mobile.jpg" alt="Denise Benning">
+</div>
+<section class="dee-intro hero-section fade-in">
+    <div class="container">
+        <div class="hero-content fade-in">
+            <h1 class="hero-title">Hello, my name is <br>Denise Benning</h1>
+            <p class="hero-description">My mission is to empower you to find healing and insight on your path to wholeness and authenticity through energetic wellness. This includes reiki, light language, angel messages and intuitive services.</p>
+            
+            <!-- Newsletter Signup -->
+            <div class="newsletter-signup">
+                <form class="newsletter-form" action="#" method="post">
+                    <div class="newsletter-input-group">
+                        <input type="email" name="email" placeholder="Your email address" required class="newsletter-input">
+                        <button type="submit" class="button button-primary newsletter-button">Subscribe</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="section services-section gradient-background-reverse" id="services-section">
+    <div class="subtle-shift-accent-spiral"></div>
+    <div class="container fade-in-up">
+        <div class="section-header">
+            <div class="section-tag" id="services">Services</div>
+            <h2 class="section-title">Spiritual Services to Nurture Your Soul</h2>
+            <p class="section-description">Discover the perfect modality to support your spiritual journey and personal growth.</p>
+        </div>
+                    <ServicesCarousel services={services} client:load />
+        <div class="learn-more">
+            <a href="/services" class="button button-primary">Read all about my services</a>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="section" id="about-section">
+    <div class="container">
+        <div class="section-header about-section-header">
+            <div class="section-tag" id="about">About Denise</div>
+            <div class="semi-circle-frame fade-in">
+                <img src="/images/ALG_7865.jpeg" alt="Denise Benning" class="semi-circle-image">
+            </div>
+            <div class="relative">
+
+                <h2 class="section-title fade-in delay-100">Guiding Souls on Their Spiritual Journey</h2>
+                <p class="section-description fade-in delay-200">With over 15 years of experience in spiritual guidance and energy healing, Denise Benning has helped thousands of individuals connect with their higher selves and discover their true purpose.</p>
+            </div>
+        </div>
+        <div class="about-content fade-in delay-300">
+            <div class="about-bio">
+                <AboutAccordion items={aboutAccordion.aboutAccordion} client:load />
+            </div>
+            <div class="about-features relative">
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">
+                        <img src="/images/butterfly.png">
+                    </div>
+                    <div class="feature-content">
+                        <h3 class="feature-title">Divine Channel</h3>
+                        <p class="feature-description">Trained in multiple modalities including Reiki, Angelic Healing, and Oracle Card Reading.</p>
+                    </div>
+                </div>
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">
+                        <img src="/images/author.png">
+                    </div>
+                    <div class="feature-content">
+                        <h3 class="feature-title">Published Author</h3>
+                        <p class="feature-description">Self published author of "Intimacy of Light."</p>
+                    </div>
+                </div>
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">
+                        <img src="/images/cabin.png">
+                    </div>
+                    <div class="feature-content">
+                        <h3 class="feature-title">Retreat Facilitator</h3>
+                        <p class="feature-description">Leads transformative retreats and workshops around the world, creating spaces for healing and growth.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Events Section -->
+<section class="section events-section gradient-background">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-tag" id="events">Retreats & Events</div>
+            <h2 class="section-title">Exclusive retreats</h2>
+            <p class="section-description">Capture the moment and join a unique once in a lifetime experience.</p>
+        </div>
+        
+        <div>
+            <p class="events-subtitle feature-description"><i class="fas fa-star"></i>Featured Upcoming Event</p>
+            {featuredEvent ? (
+                <div class="featured-event-card">
+                    <div class="event-grid">
+                        <div class="event-image">
+                            <a href={featuredEvent.url}><img src={featuredEvent.image} alt={featuredEvent.title}></a>
+                        </div>
+                        <div class="featured-event-content">
+                            <div class="event-meta">
+                                <div class="event-date">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    </svg>
+                                    <div class="section-tag-events">{featuredEvent.date}</div>
+                                </div>
+                                <div class="event-date">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                        <circle cx="12" cy="10" r="3"></circle>
+                                    </svg>
+                                    <div class="section-tag-events">{featuredEvent.location}</div>
+                                </div>
+                                <div class="event-date">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <path d="M8 12l2 2 4-4"></path>
+                                    </svg>
+                                    <div class="section-tag-events">{featuredEvent.type.charAt(0).toUpperCase() + featuredEvent.type.slice(1)}</div>
+                                </div>
+                            </div>
+                            <div class="event-content-inner">
+                                <h4 class="featured-event-title">{featuredEvent.title}</h4>
+                                <p class="featured-post-excerpt">{featuredEvent.description.length > 120 ? featuredEvent.description.substring(0, 120) + '...' : featuredEvent.description}</p>
+                            </div>
+                            <div class="event-details">
+                                <a href={featuredEvent.url} class="button button-primary">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <div class="featured-event-card">
+                    <div class="event-content-inner" style="text-align: center; padding: 2rem;">
+                        <h4 class="featured-event-title">No Upcoming Events</h4>
+                        <p class="featured-post-excerpt">Check back soon for new events and retreats, or contact Denise directly for private sessions.</p>
+                        <div class="event-details">
+                            <a href="/contact" class="button button-primary">Contact Denise</a>
+                        </div>
+                    </div>
+                </div>
+            )}
+            
+            <div class="section-header">
+                <h2 class="section-title">Join Our Transformative Gatherings</h2>
+                <p class="section-description">Experience profound healing and connection through our retreats and weekly events.</p>
+            </div>
+            <ServicesCarousel services={eventCardsData.events} sectionTag="Events" client:load />
+            <div class="learn-more">
+                <a href="/events" class="button button-primary">View All Events</a>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Featured Book Section -->
+<section id="book-section">
+    <PrimarySparkles 
+                            className="w-full h-full opacity-90"
+                            particleDensity={100}
+                            speed={25}
+                            client:load 
+                        />
+    <div class="container"> 
+        <div class="featured-book">
+            <div class="book-container">
+                <div class="book-image">
+                    <img src="/images/intimacy-of-light_r1.png" alt="Soul Awakening: A Journey to Self-Discovery">
+                    <div class="book-new-badge">NEW</div>
+                </div>
+                <div class="book-content">
+                    <div class="book-blurb">
+                        <h2 class="section-title">The Intimacy of Light</h2>
+                        <p class="book-description" id="book-description">This book is a deeply personal story of spiritual awakening. It is a captivating blend of <b>cosmic memoir</b> and <b>spiritual guidebook,</b> in which Denise Benning (Channa Dee) shares the journey of her soul's light, guided by the radiant presence of Jeremiah, a Divine Master with whom she shares an eternal connection spanning countless lifetimes.</p>
+                    
+                    </div>
+
+
+                    <!-- <div class="book-retailers">
+                        <a href="https://www.amazon.com" class="book-retailer" aria-label="Amazon" target="_blank">
+                            <img src="/images/amazon-logo-squid-ink-smile-orange.png" alt="Amazon">
+                        </a>
+                        <a href="https://books.apple.com" class="book-retailer" aria-label="Apple Books" target="_blank">
+                            <img src="/images/Download_on_Apple-books.png" alt="Apple Books">
+                        </a>
+                        <a href="https://www.kobo.com" class="book-retailer" aria-label="Kobo" target="_blank">
+                            <img src="/images/Kobo-logo.png" alt="Kobo">
+                        </a>
+                        <a href="https://www.kindle" class="book-retailer" aria-label="Kindle" target="_blank">
+                            <img src="/images/amazon-kindle-logo.png" alt="Kindle">
+                        </a>
+                    </div> -->
+                    
+                    <div class="book-actions">
+                        <a href="/book" class="button button-outline-inverse">Get Your Copy</a>
+                        <a href="/book" class="button button-outline-inverse">Read Sample</a>
+                    </div>
+                
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Blog Section -->
+<section class="section blog-section">
+    <div class="container">
+        <div class="section-header">
+            <a href="/posts" class="section-tag">Resources</a>
+            <a><h2 class="section-title">Learning and Reflections</h2></a>
+            <p class="section-description">Insights, reflections, and wisdom to support your spiritual journey.</p>
+        </div>
+
+        {posts.length > 0 ? (
+            <>
+                <div class="blog-bento-grid">
+                    {/* Featured large post */}
+                    <div class="bento-item bento-featured">
+                        <a href={`/posts/${posts[0].slug}`} class="bento-link">
+                            <div class="bento-image">
+                                <img src={posts[0].data.featured_image} alt={posts[0].data.title}>
+                            </div>
+                            <div class="bento-content">
+                                <div class="post-meta">
+                                    <span class="section-tag">{posts[0].data.categories}</span>
+                                </div>
+                                <h3 class="bento-title bento-title-large">{posts[0].data.title}</h3>
+                                <p class="bento-excerpt">{createExcerpt(posts[0].body, 120)}</p>
+                                <div class="bento-read-more">
+                                    Read Article
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        <polyline points="12 5 19 12 12 19"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    {/* Medium post */}
+                    {posts[1] && (
+                        <div class="bento-item bento-medium">
+                            <a href={`/posts/${posts[1].slug}`} class="bento-link">
+                                <div class="bento-image">
+                                    <img src={posts[1].data.featured_image} alt={posts[1].data.title}>
+                                </div>
+                                <div class="bento-content">
+                                    <div class="post-meta">
+                                        <span class="section-tag">{posts[1].data.categories}</span>
+                                    </div>
+                                    <h3 class="bento-title">{posts[1].data.title}</h3>
+                                    <p class="bento-excerpt">{createExcerpt(posts[1].body, 80)}</p>
+                                </div>
+                            </a>
+                        </div>
+                    )}
+
+                    {/* Small posts */}
+                    {posts[2] && (
+                        <div class="bento-item bento-small">
+                            <a href="https://www.youtube.com/watch?v=FTHZPYVNYTc&list=PLe3E05BfHVc4HjPEy0w4wvOagQnUSFPcr" class="bento-link">
+                                <div class="bento-image">
+                                    <img src="/images/podcasts.jpg">
+                                </div>
+                                <div class="bento-content">
+                                    <div class="post-meta">
+                                        <span class="section-tag">Podcast</span>
+                                    </div>
+                                    <h3 class="bento-title bento-title-small">Official Intimacy of Light Book Club</h3>
+                                </div>
+                            </a>
+                        </div>
+                    )}
+
+                    {posts[3] && (
+                        <div class="bento-item bento-small">
+                            <a href={`/posts/${posts[3].slug}`} class="bento-link">
+                                <div class="bento-image">
+                                    <img src={posts[3].data.featured_image} alt={posts[3].data.title}>
+                                </div>
+                                <div class="bento-content">
+                                    <div class="post-meta">
+                                        <span class="section-tag">{posts[3].data.categories}</span>
+                                    </div>
+                                    <h3 class="bento-title bento-title-small">{posts[3].data.title}</h3>
+                                </div>
+                            </a>
+                        </div>
+                    )}
+
+                    {/* Newsletter subscription box */}
+                    <div class=" gradient-background-reverse bento-item bento-newsletter">
+                        <div class="bento-newsletter-content">
+                            
+                            <h3 class="newsletter-title">The Subtle Shift Newsletter</h3>
+                            <p class="newsletter-description">Get meditations, resources, and the latest Subtle Shift updates delivered to your inbox for free.</p>
+                            <form class="bento-newsletter-form" action="#" method="post">
+                                <div class="newsletter-input-group">
+                                    <input type="email" name="email" placeholder="Your email address" required class="newsletter-input">
+                                    <button type="submit" class="button button-primary newsletter-button">Subscribe</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    {/* Featured video */}
+                    <div class="bento-item bento-tall bento-video-full">
+                        <HeroVideoDialog
+                            videoSrc="https://www.youtube.com/embed/abwmRsT9XMY?si=dHz0BFWUu_ne0VnZ"
+                            thumbnailSrc="/images/video-thumbnail.jpg"
+                            thumbnailAlt="Soul Conversations with Denise - Video Thumbnail"
+                            animationStyle="from-center"
+                            className="bento-video-player-full"
+                            client:load
+                        />
+                    </div>
+                </div>
+                
+                <div class="learn-more">
+                    <a href="/posts" class="button button-primary">View All Articles</a>
+                </div>
+            </>
+        ) : null}
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-tag" id="testimonials">Testimonials</div>
+            <h2 class="section-title">Transformative Experiences</h2>
+            <p class="section-description">Hear from those who have experienced profound shifts through working with Denise.</p>
+        </div>
+    </div>
+    <div class="rounded-md flex flex-col antialiased bg-transparent items-center justify-center relative overflow-hidden w-full">
+        <InfiniteMovingCards 
+            items={transformedTestimonials}
+            direction="right"
+            speed="slow"
+            pauseOnHover={true}
+            className="w-full"
+            client:load 
+        />
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+<CallToAction />
+</Layout>

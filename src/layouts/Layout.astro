@@ -1,0 +1,61 @@
+---
+import Header from '../components/Header.astro';
+import MenuOverlay from '../components/MenuOverlay.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+export interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = "The Subtle Shift", description = "Begin your soul journey with Denise Benning. Discover healing, insight, and transformation through reiki, light language, angel messages, and intuitive services." } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{title === "The Subtle Shift" ? title : `${title} | The Subtle Shift`}</title>
+    <meta name="description" content={description}>
+    <!-- CSS now handled by global.css import above -->
+    <link rel="stylesheet" href="https://use.typekit.net/ymq8bvt.css">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+</head>
+<body>
+    <Header />
+    <MenuOverlay />
+
+    <!-- Main site content that will slide down to reveal menu -->
+    <div class="site-wrapper">
+        <main class="main-content">
+            <slot />
+        </main>
+        <Footer />
+    </div>
+    <script src="/js/main.js" is:inline></script>
+    <script>
+        if ((window as any).netlifyIdentity) {
+            (window as any).netlifyIdentity.on("init", (user: any) => {
+                if (!user) {
+                    (window as any).netlifyIdentity.on("login", () => {
+                        document.location.href = "/admin/";
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+</html> 

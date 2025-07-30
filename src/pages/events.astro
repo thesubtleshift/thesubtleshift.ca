@@ -1,0 +1,95 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CallToAction from '../components/CallToAction.astro';
+
+// Type definitions for event data
+interface Event {
+  title: string;
+  date: string;
+  location: string;
+  description: string;
+  image: string;
+  url: string;
+  type: string;
+  featured: boolean;
+  sortDate: string;
+}
+
+// Import all event JSON files dynamically
+const eventFiles = import.meta.glob('../data/events/*.json');
+const events: Event[] = [];
+
+// Load and sort events by date
+for (const path in eventFiles) {
+  const eventData = await eventFiles[path]() as { default: Event };
+  events.push(eventData.default);
+}
+
+// Sort events by sortDate (chronological order)
+events.sort((a, b) => new Date(a.sortDate).getTime() - new Date(b.sortDate).getTime());
+---
+
+<Layout title="Spiritual Events & Retreats - The Subtle Shift">
+    <main class="main-content">
+        <!-- Events List Section -->
+        <section class="section">
+            <div class="container">
+                <div class="section-header first-section-header">
+                    <div class="section-tag">Transformative Experiences</div>
+                    <h1 class="section-title">Spiritual Events & Retreats</h1>
+                    <p class="section-description">Join Denise for transformative experiences that nurture your soul and deepen your spiritual journey. From intimate healing circles to immersive retreats, discover the perfect opportunity for growth and connection.</p>
+                </div>
+            </div>
+            <div class="container">
+                <div class="events-list">
+                    {events.map((event: Event) => (
+                        <div class="featured-event-card">
+                            <div class="event-grid">
+                                <div class="event-image">
+                                    <a href={event.url}>
+                                        <img src={event.image} alt={event.title}>
+                                    </a>
+                                </div>
+                                <div class="featured-event-content">
+                                    <div class="event-meta">
+                                        <div class="event-date">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                                            </svg>
+                                            <div class="section-tag-events">{event.date}</div>
+                                        </div>
+                                        <div class="event-date">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                                <circle cx="12" cy="10" r="3"></circle>
+                                            </svg>
+                                            <div class="section-tag-events">{event.location}</div>
+                                        </div>
+                                        <div class="event-date">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <path d="M8 12l2 2 4-4"></path>
+                                            </svg>
+                                            <div class="section-tag-events">{event.type.charAt(0).toUpperCase() + event.type.slice(1)}</div>
+                                        </div>
+                                    </div>
+                                    <div class="event-content-inner">
+                                        <h2 class="featured-event-title">{event.title}</h2>
+                                        <p class="featured-post-excerpt">{event.description}</p>
+                                    </div>
+                                    <div class="event-details">
+                                        <a href={event.url} class="button button-primary">Learn More & Register</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+            <CallToAction />
+        </section>
+    </main>
+</Layout>

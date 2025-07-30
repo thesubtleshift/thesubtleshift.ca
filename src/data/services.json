@@ -1,0 +1,36 @@
+{
+  "services": [
+    {
+      "title": "Soul Journey Sessions",
+      "duration": "60m - 90m",
+      "description": "A transformative blend of reiki, light language, and channeled messages to access soul wisdom and past life healing.",
+      "longdescription": "During this unique session, we embark on a journey with your soul through a blend of reiki, light language, and channeled messages. We connect with your soul’s wisdom to discover the healing and insights needed in the present moment. Often, the journey leads to a connection with a past life or multidimensional aspect of you to facilitate the healing and integration of experiences resonating in your present life.",
+      "image": "/images/Studio-angle-1_HHC0417.JPG",
+      "url": "/services#soul-journey"
+    },
+    {
+      "title": "Soul Coaching Packages",
+      "duration": "60m",
+      "description": "Multi-session spiritual mentoring to explore and develop your intuitive gifts and multidimensionality. Available in 3, 5, or 8 sessions.",
+      "longdescription": "Delve deeper into your spiritual journey with Denise’s nurturing support and guidance. Over a series of sessions, Denise will guide, validate and offer unwavering support as you explore your intuitive gifts and multidimensionality. 3, 5 and 8 session packages available",
+      "image": "/images/ALG_7944.jpeg",
+      "url": "/services#soul-coaching"
+    },
+    {
+      "title": "Angelic Energy Sessions", 
+      "duration": "15m Message, 60m Session",
+      "description": "Receive personalized written guidance from Archangels followed by an energetic alignment session for insight and self-discovery.",
+      "longdescription": "This experience begins with a personalized, written channeled message from the Archangels, imparting their guidance and insights.  You will then receive an Angelic energy session that facilitates a powerful alignment with the Archangel associated with your journey and provides further insight and self discovery.",
+      "image": "/images/trillium_3_r1.jpg",
+      "url": "/services#angelic-energy"
+    },
+    {
+      "title": "Oracle Card Readings",
+      "duration": "30m - 60m",
+      "description": "Intuitive guidance using oracle cards, meditation, and light language to reveal messages from your guides about your soul's journey.",
+      "longdescription": "This session offers an opportunity for you to gain guidance and a deeper understanding of your soul’s journey. Denise utilizes oracle cards and her intuitive skills to bring through messages from your guides and angels about what your soul wants you to know. You will also experience a short meditation to connect with your higher self, and a light language transmission to integrate the information.",
+      "image": "/images/oracle-spread.jpg",
+      "url": "/services#oracle-reading"
+    }
+  ]
+}
