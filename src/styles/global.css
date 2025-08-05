@@ -268,13 +268,13 @@ body {
     /* Color system */
     --background: hsl(0 0% 100%);
     --foreground: hsl(20, 5%, 20%);
-    
+
     /* Surface colors */
     --card: hsl(0 0% 100%);
     --card-foreground: hsl(240 10% 3.9%);
     --popover: hsl(0 0% 100%);
     --popover-foreground: hsl(240 10% 3.9%);
-    
+
     /* Brand colors */
     --primary: hsl(123, 76%, 40%);
     --primary-foreground: hsl(0 0% 98%);
@@ -282,7 +282,7 @@ body {
     --secondary-foreground: hsl(20, 5%, 10%);
     --tertiary: hsl(36, 36%, 95%);
     --tan-background: hsl(44, 27%, 89%);
-    
+
     /* UI colors */
     --muted: hsl(240 4.8% 95.9%);
     --muted-foreground: hsl(240 3.8% 46.1%);
@@ -290,15 +290,15 @@ body {
     --accent-foreground: hsl(240 5.9% 10%);
     --destructive: hsl(0 84.2% 60.2%);
     --destructive-foreground: hsl(0 0% 98%);
-    
+
     /* Border and input colors */
     --border: hsl(240 5.9% 90%);
     --input: hsl(240 5.9% 90%);
     --ring: hsl(139, 76%, 40%);
-    
+
     /* Border radius */
     --radius: 0.5rem;
-    
+
     /* Typography */
     --font-sans: 'Manrope', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --font-heading: 'classico-urw', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -308,9 +308,6 @@ body {
     --letter-spacing-normal: 0%;
 }
 
-body {
-
-}
 .sans-serif {
     font-family: var(--font-sans);
 }
@@ -327,15 +324,12 @@ body {
 .site-wrapper {
     display: flex;
     flex-direction: column;
-    /*min-height: 100vh;*/
     width: 100%;
     overflow-x: auto;
     position: relative;
     z-index: 20;
     transition: transform 0.4s;
     background-color: var(--background);
-    border-radius:2rem 2rem 0 0;
-    margin-top: 1rem;
 }
 
 .site-wrapper.menu-open {
@@ -435,7 +429,7 @@ body {
     .site-name, .title-container {
         display: block;
     }
-    
+
     .title-white-container {
         display: block;
     }
@@ -699,7 +693,7 @@ body {
     font-weight: 700;
     line-height: var(--line-height-tight);
     margin-bottom: 1rem;
-    letter-spacing: var(--letter-spacing-tight);    
+    letter-spacing: var(--letter-spacing-tight);
 }
 
 @media (min-width: 768px) {
@@ -808,7 +802,7 @@ body {
         gap: 0.75rem;
         line-height: 1.2;
     }
-    
+
     .footer-nav nav {
         display: flex;
         flex-wrap: wrap;
@@ -825,7 +819,7 @@ body {
         flex-wrap: nowrap;
         width: auto;
     }
-    
+
     .footer-nav nav {
         display: flex;
         gap: 1.5rem;
@@ -836,7 +830,7 @@ body {
     .footer-nav {
         gap: 2rem;
     }
-    
+
     .footer-nav nav {
         gap: 2rem;
     }
@@ -846,7 +840,7 @@ body {
     .footer-nav {
         gap: 2.5rem;
     }
-    
+
     .footer-nav nav {
         gap: 2rem;
     }
@@ -1145,7 +1139,7 @@ body {
     .subtle-shift-accent-spiral {
         width: 1000px;
         height: 1000px;
-        left: 35%;  
+        left: 35%;
         top: -200px;
     }
 }
@@ -1261,7 +1255,7 @@ body {
     position: relative;
     width: 100%;
     padding: 1.5rem 1.5rem 3.5rem 1.5rem;
-    background: linear-gradient(to bottom, 
+    background: linear-gradient(to bottom,
         rgba(0, 0, 0, 0.6) 0%,
         rgba(0, 0, 0, 0.4) 50%,
         rgba(0, 0, 0, 0) 100%);
@@ -1645,7 +1639,7 @@ body {
         margin-bottom: 0;
         pointer-events: none;
     }
-    
+
     .carousel-arrows {
         position: absolute;
         top: 50%;
@@ -1656,7 +1650,7 @@ body {
         display: flex;
         justify-content: space-between;
     }
-    
+
     .carousel-prev, .carousel-next {
         pointer-events: auto;
     }
@@ -1993,7 +1987,7 @@ body {
     -webkit-backdrop-filter: blur(4px);
 }
 
-.button-inverse:hover { 
+.button-inverse:hover {
     background-color: var(--secondary);
     color: var(--muted-foreground);
 }
@@ -2517,17 +2511,17 @@ body.menu-open {
         grid-column: 1 / -1;
         grid-row: 1 / 2;
     }
-    
+
     .bento-featured .bento-link {
         display: flex;
         height: 300px;
     }
-    
+
     .bento-featured .bento-image {
         flex: 1.2;
         height: 100%;
     }
-    
+
     .bento-featured .bento-content {
         flex: 1;
         justify-content: center;
@@ -2540,18 +2534,18 @@ body.menu-open {
         grid-column: 1 / 3;
         grid-row: 1 / 3;
     }
-    
+
     .bento-featured .bento-link {
         display: flex;
         flex-direction: column;
         height: 100%;
     }
-    
+
     .bento-featured .bento-image {
         flex: 1;
         height: 60%;
     }
-    
+
     .bento-featured .bento-content {
         flex: 0 0 auto;
         height: 40%;
@@ -2598,7 +2592,7 @@ body.menu-open {
         grid-column: 1 / 2;
         grid-row: 3 / 4;
     }
-    
+
     .bento-small:nth-child(4) {
         grid-column: 2 / 3;
         grid-row: 3 / 4;
@@ -2610,7 +2604,7 @@ body.menu-open {
         grid-column: 3 / 4;
         grid-row: 2 / 3;
     }
-    
+
     .bento-small:nth-child(4) {
         grid-column: 4 / 5;
         grid-row: 2 / 3;
@@ -3095,7 +3089,7 @@ body.menu-open {
     margin-bottom: 1.5rem;
 }
 
-.post-content ul, 
+.post-content ul,
 .post-content ol {
     margin-bottom: 1.5rem;
     padding-left: 1.25rem;
@@ -3341,11 +3335,11 @@ body.menu-open {
     .mosaic-item-0 {
         grid-row: span 1;
     }
-    
+
     .mosaic-item-1 {
         grid-row: span 2;
     }
-    
+
     .mosaic-item-2 {
         grid-row: span 1;
     }
@@ -3355,25 +3349,25 @@ body.menu-open {
     .testimonials-mosaic {
         grid-auto-rows: minmax(100px, auto);
     }
-    
+
     .mosaic-item-0 {
         grid-row: span 1;
     }
-    
+
     .mosaic-item-1 {
         grid-row: span 2;
     }
-    
+
     .mosaic-item-2 {
         grid-row: span 1;
     }
-    
+
     /* Additional visual variety for larger screens */
     .testimonial-card:nth-child(5n+1) .testimonial-quote-icon,
     .testimonial-card:nth-child(5n+3) .testimonial-quote-icon {
         align-self: flex-end;
     }
-    
+
     .testimonial-card:nth-child(5n+2) .testimonial-quote-icon,
     .testimonial-card:nth-child(5n+4) .testimonial-quote-icon {
         align-self: flex-start;
@@ -3487,11 +3481,11 @@ body.menu-open {
         padding: 0.5rem;
         margin: 0 0.5rem;
     }
-    
+
     .menu-item {
         border-right: none;
     }
-    
+
     .menu-item:nth-last-child(-n+1) {
         border-bottom: 1px solid color-mix(in srgb, var(--secondary) 85%, black);
     }
@@ -3522,7 +3516,7 @@ body.menu-open {
     text-decoration: none;
 }
 
-.logo-icon {  
+.logo-icon {
     width: 3rem;
     height: 3rem;
     -webkit-mask-image: url('/images/subtleshiftspiral.svg');
@@ -3536,7 +3530,7 @@ body.menu-open {
     margin-top:-10px;
     transition: all 0.2s ease;
 }
-.footer-logo {  
+.footer-logo {
     width: 2rem;
     height: 2rem;
     background-color: var(--muted-foreground);
@@ -3620,7 +3614,7 @@ body.menu-open {
     width: 100%;
     max-width: 1350px;
     font-size: 0.9rem;
-    
+
 }
 
 .menu-address {
@@ -3671,16 +3665,16 @@ body.menu-open {
         padding: 1.5rem;
         display: flex;
     }
-    
-    .menu-address, 
+
+    .menu-address,
     .menu-social-wrapper {
         text-align: center;
     }
-    
+
     .menu-social {
         justify-content: center;
     }
-    
+
     .menu-item {
         font-size: 1.5rem;
         padding: 1.5rem;
@@ -3697,20 +3691,20 @@ body.menu-open {
     .menu-item:nth-last-child(-n+1) {
         border-top: 1px solid color-mix(in srgb, var(--secondary) 40%, black);
     }
-    
-    .menu-header, 
+
+    .menu-header,
     .menu-footer {
         padding: 1rem;
     }
-    
+
     .menu-footer {
         gap: 1.5rem;
     }
-    
+
     .menu-logo .site-name {
         font-size: 1.25rem;
     }
-    
+
     .menu-social {
         flex-wrap: wrap;
         justify-content: center;
@@ -3803,16 +3797,16 @@ body.menu-open {
     .book-sample-modal-content {
         max-width: 95%;
     }
-    
+
     .book-sample-header {
         padding: 1.5rem 1.5rem 1rem;
     }
-    
+
     .book-sample-title {
         font-size: 1.5rem;
         padding-right: 1.5rem;
     }
-    
+
     .book-sample-body {
         padding: 1.5rem;
     }
@@ -3879,13 +3873,13 @@ body.menu-open {
     .newsletter-input-group {
         flex-direction: row;
     }
-    
+
     .newsletter-input {
         flex: 1;
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
     }
-    
+
     .newsletter-button {
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
