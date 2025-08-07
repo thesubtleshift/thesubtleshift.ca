@@ -7,6 +7,6 @@ connection.
 
 ## Licenses
 
-- **Code:** [MIT](./LICENSE)
-- **Content (images, text, etc.):** _All rights reserved_, see
-  [CONTENT-LICENSE](./CONTENT-LICENSE)
+- **Code:** [MIT license](./LICENSE-CODE)
+- **Content (images, text, etc.):** Copyright (c) 2015-now The Subtle Shift,
+  [All rights reserved](./LICENSE-CONTENT)
