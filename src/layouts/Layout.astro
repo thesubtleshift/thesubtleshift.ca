@@ -1,15 +1,67 @@
 ---
 import Header from '../components/Header.astro';
-import MenuOverlay from '../components/MenuOverlay.astro';
 import Footer from '../components/Footer.astro';
+import Navigation from '../components/Navigation.astro';
 import '../styles/global.css';
-
+import '../styles/navigation.css';
 export interface Props {
   title?: string;
   description?: string;
 }
 
 const { title = "The Subtle Shift", description = "Begin your soul journey with Denise Benning. Discover healing, insight, and transformation through reiki, light language, angel messages, and intuitive services." } = Astro.props;
+
+// Define menu items directly
+const menuItems = [
+  { 
+    name: "Home", 
+    url: "/", 
+    active: Astro.url.pathname === "/",
+    hasChildren: false
+  },
+  { 
+    name: "Services", 
+    url: "https://thesubtleshift.simplybook.me/v2/#book",
+    active: false,
+    hasChildren: false
+  },
+  { 
+    name: "Retreats & Events", 
+    url: "#", 
+    active: Astro.url.pathname.startsWith("/events"),
+    hasChildren: true,
+    children: [
+      { name: "Upcoming events", url: "/events" },
+      { name: "Intuitive Development Circle", url: "#" },
+      { name: "Holistics & Mystics Online", url: "#" },
+      { name: "Private Retreats", url: "/retreats" },
+      { name: "Private Group Experiences", url: "#" },
+      { name: "Event archive", url: "/events/" }
+    ]
+  },
+  { 
+    name: "Books", 
+    url: "#", 
+    active: Astro.url.pathname.startsWith("/book"),
+    hasChildren: true,
+    children: [
+      { name: "Intimacy of Light", url: "/book" }
+    ]
+  },
+  { 
+    name: "Blog", 
+    url: "/posts",
+    active: Astro.url.pathname.startsWith("/posts"),
+    hasChildren: false
+  },
+  { 
+    name: "Contact", 
+    url: "/contact",
+    active: Astro.url.pathname === "/contact",
+    hasChildren: false
+  }
+];
+
 ---
 
 <!DOCTYPE html>
@@ -35,10 +87,17 @@ const { title = "The Subtle Shift", description = "Begin your soul journey with 
     <meta name="theme-color" content="#ffffff">
 </head>
 <body>
-    <Header />
-    <MenuOverlay />
+    <!-- Navigation Component -->
+    <Navigation 
+        logoSrc="/images/subtleshiftspiral.svg"
+        logoAlt="The Subtle Shift"
+        logoSmallSrc="/images/subtleshiftspiral.svg"
+        siteTitle="The Subtle Shift"
+        menuItems={menuItems}
+        dropdownMouseOver={false}
+    />
 
-    <!-- Main site content that will slide down to reveal menu -->
+    <!-- Main site content -->
     <div class="site-wrapper">
         <main class="main-content">
             <slot />

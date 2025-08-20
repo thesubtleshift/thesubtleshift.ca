@@ -1,0 +1,213 @@
+---
+// Navigation.astro - Astro component converted from Hugo universal theme navigation
+// This component includes all necessary Bootstrap-to-CSS conversions for standalone use
+
+export interface NavigationProps {
+  logoSrc: string;
+  logoAlt: string;
+  logoSmallSrc?: string;
+  siteTitle: string;
+  menuItems: MenuItem[];
+  dropdownMouseOver?: boolean;
+}
+
+export interface MenuItem {
+  name: string;
+  url: string;
+  identifier?: string;
+  weight?: number;
+  active?: boolean;
+  children?: MenuItem[];
+  hasChildren?: boolean;
+  post?: string; // For yamm column layout
+}
+
+const { 
+  logoSrc, 
+  logoAlt, 
+  logoSmallSrc, 
+  siteTitle, 
+  menuItems, 
+  dropdownMouseOver = false 
+} = Astro.props as NavigationProps;
+
+// Example menu structure for reference:
+// const exampleMenuItems = [
+//   { name: "Home", url: "/", active: true },
+//   { name: "Services", url: "/services" },
+//   { 
+//     name: "Retreats & Events", 
+//     url: "#", 
+//     hasChildren: true,
+//     children: [
+//       { name: "Upcoming events", url: "/events" },
+//       { name: "Intuitive Development Circle", url: "/circles" },
+//       { name: "Private Retreats", url: "/private-retreats" },
+//       { name: "Event archive", url: "/events/archive" }
+//     ]
+//   },
+//   { name: "Blog", url: "/blog" },
+//   { name: "Contact", url: "/contact" }
+// ];
+---
+
+<header>
+  <div class={`navbar navbar-default yamm ${dropdownMouseOver ? 'mouseover' : ''}`} role="navigation" id="navbar">
+    <div class="navbar-wrapper">
+      <div class="navbar-header">
+        <a class="navbar-brand home" href="/">
+          <img src={logoSrc} alt={logoAlt} class="navbar-logo" />
+          <span class="sr-only">{siteTitle} - Home</span>
+        </a>
+        <div class="navbar-buttons">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigation">
+            <span class="sr-only">Toggle navigation</span>
+            <i class="fas fa-align-justify"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="navbar-collapse collapse" id="navigation">
+        <ul class="nav navbar-nav navbar-right">
+          {menuItems.map((item) => {
+            if (item.hasChildren && item.children) {
+              return (
+                <li class={`dropdown ${item.active ? 'active' : ''}`}>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    {item.name} <span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu">
+                    {item.children.map((child) => (
+                      <li><a href={child.url}>{child.name}</a></li>
+                    ))}
+                  </ul>
+                </li>
+              );
+            } else {
+              return (
+                <li class={`dropdown ${item.active ? 'active' : ''}`}>
+                  <a href={item.url}>{item.name}</a>
+                </li>
+              );
+            }
+          })}
+        </ul>
+      </div>
+
+      <div class="book-session-btn button button-primary">
+        <a href="#">Book Session</a>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+<script>
+  // Navigation functionality for Astro component
+  document.addEventListener('DOMContentLoaded', function() {
+    const navbarToggle = document.querySelector('.navbar-toggle');
+    const navbarCollapse = document.querySelector('.navbar-collapse');
+    const dropdowns = document.querySelectorAll('.dropdown');
+    
+    // Mobile menu toggle
+    if (navbarToggle && navbarCollapse) {
+      navbarToggle.addEventListener('click', function(this: HTMLButtonElement) {
+        navbarCollapse.classList.toggle('in');
+        this.setAttribute('aria-expanded', navbarCollapse.classList.contains('in') ? 'true' : 'false');
+      });
+    }
+    
+    // Dropdown functionality
+    dropdowns.forEach(dropdown => {
+      const toggle = dropdown.querySelector('.dropdown-toggle');
+      const menu = dropdown.querySelector('.dropdown-menu');
+      
+      if (toggle && menu) {
+        toggle.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          // Close other dropdowns
+          dropdowns.forEach(otherDropdown => {
+            if (otherDropdown !== dropdown) {
+              otherDropdown.classList.remove('open');
+            }
+          });
+          
+          // Toggle current dropdown
+          dropdown.classList.toggle('open');
+          
+          // Update aria-expanded
+          const isOpen = dropdown.classList.contains('open');
+          toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+      }
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target || !(e.target as Element).closest('.dropdown')) {
+        dropdowns.forEach(dropdown => {
+          dropdown.classList.remove('open');
+          const toggle = dropdown.querySelector('.dropdown-toggle');
+          if (toggle) {
+            toggle.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
+    });
+    
+    // Mobile scroll hide/show navbar
+    let lastScrollY = 0;
+    let ticking = false;
+    
+    function updateNavbarVisibility() {
+      const navbar = document.querySelector('.navbar');
+      const navbarCollapse = document.querySelector('.navbar-collapse');
+      const navbarToggle = document.querySelector('.navbar-toggle');
+      const currentScrollY = window.scrollY;
+      
+      // Only apply on mobile screens
+      if (window.innerWidth <= 767 && navbar) {
+        if (currentScrollY > lastScrollY && currentScrollY > 100) {
+          // Scrolling down - hide navbar and close menu
+          navbar.classList.add('navbar-hidden');
+          if (navbarCollapse && navbarToggle) {
+            navbarCollapse.classList.remove('in');
+            navbarToggle.setAttribute('aria-expanded', 'false');
+          }
+        } else {
+          // Scrolling up - show navbar
+          navbar.classList.remove('navbar-hidden');
+        }
+      }
+      
+      lastScrollY = currentScrollY;
+      ticking = false;
+    }
+    
+    function requestScrollTick() {
+      if (!ticking) {
+        requestAnimationFrame(updateNavbarVisibility);
+        ticking = true;
+      }
+    }
+    
+    // Only enable scroll behavior on mobile
+    function handleScroll() {
+      if (window.innerWidth <= 767) {
+        requestScrollTick();
+      }
+    }
+    
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', function() {
+      // Reset navbar visibility on resize
+      const navbar = document.querySelector('.navbar');
+      if (navbar && window.innerWidth > 767) {
+        navbar.classList.remove('navbar-hidden');
+      }
+    });
+    
+
+  });
+</script>

@@ -1,26 +1,6 @@
-// Mobile menu functionality
+
+// Accordion and other functionality
 document.addEventListener('DOMContentLoaded', function() {
-    const menuButton = document.querySelector('.menu-button');
-    const mobileMenu = document.getElementById('mobile-menu');
-    
-    if (menuButton && mobileMenu) {
-        menuButton.addEventListener('click', function() {
-            const isExpanded = menuButton.getAttribute('aria-expanded') === 'true';
-            menuButton.setAttribute('aria-expanded', !isExpanded);
-            mobileMenu.classList.toggle('active');
-            document.body.classList.toggle('menu-open');
-        });
-
-        // Close menu with escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
-                menuButton.setAttribute('aria-expanded', 'false');
-                mobileMenu.classList.remove('active');
-                document.body.classList.remove('menu-open');
-            }
-        });
-    }
-
     // Accordion functionality
     const accordionTriggers = document.querySelectorAll('.accordion-trigger');
     
@@ -170,58 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Menu Toggle functionality
-    const menuToggleButtons = document.querySelectorAll('.menu-toggle');
-    const siteWrapper = document.querySelector('.site-wrapper');
-    
-    if (menuToggleButtons.length > 0 && siteWrapper) {
-        // Function to toggle menu state
-        const toggleMenu = function() {
-            const isMenuOpen = siteWrapper.classList.contains('menu-open');
-            
-            // Toggle menu state
-            menuToggleButtons.forEach(btn => {
-                btn.setAttribute('aria-expanded', !isMenuOpen);
-            });
-            
-            siteWrapper.classList.toggle('menu-open');
-            
-            // Toggle body overflow
-            if (!isMenuOpen) {
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.body.style.overflow = '';
-            }
-        };
-        
-        // Add click event to all toggle buttons
-        menuToggleButtons.forEach(button => {
-            button.addEventListener('click', toggleMenu);
-        });
-        
-        // Close menu when clicking on a menu item
-        const menuItems = document.querySelectorAll('.menu-item');
-        menuItems.forEach(item => {
-            item.addEventListener('click', function() {
-                menuToggleButtons.forEach(btn => {
-                    btn.setAttribute('aria-expanded', 'false');
-                });
-                siteWrapper.classList.remove('menu-open');
-                document.body.style.overflow = '';
-            });
-        });
-        
-        // Allow closing with escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && siteWrapper.classList.contains('menu-open')) {
-                menuToggleButtons.forEach(btn => {
-                    btn.setAttribute('aria-expanded', 'false');
-                });
-                siteWrapper.classList.remove('menu-open');
-                document.body.style.overflow = '';
-            }
-        });
-    }
+
 }); 
 // Blog Category Filters
 document.addEventListener('DOMContentLoaded', function() {
